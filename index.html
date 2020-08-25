@@ -18,12 +18,18 @@
             <div class="row">
                 <div :class="['col-6', playerActived == 1 ? 'active' : '']">
                     <img src="assets/player1.png" alt="Jogador 1">
-                    <p>Player 1</p>
+                    <p>
+                        Player 1
+                        <span class="badge badge-default">{{numberHistoricPlayerOne}}</span>
+                    </p>
                     <p><strong>Pontos: </strong>{{playerOne.points}}</p>
                 </div>
                 <div :class="['col-6', playerActived == 2 ? 'active' : '']">
                     <img src="assets/player2.png" alt="Jogador 2">
-                    <p>Player 2</p>
+                    <p>
+                        Player 2
+                        <span class="badge badge-default">{{numberHistoricPlayerTwo}}</span>
+                    </p>
                     <p><strong>Pontos: </strong>{{playerTwo.points}}</p>
                 </div>
 
@@ -58,24 +64,30 @@
                 data: {
                     playerActived: 1,
                     playerOne: {
-                        points: 0
+                        points: 0,
+                        historic: []
                     },
                     playerTwo: {
-                        points: 0
+                        points: 0,
+                        historic: []
                     },
                     cartSelected: ''
                 },
                 methods: {
                     changePlayer: function (){
                         this.playerActived =  this.playerActived == 1 ? 2 : 1
+                        this.cartSelected  = ''
                     },
                     selectedCart: function () {
                         this.cartSelected = Math.floor((Math.random() * 13) + 1)
 
-                        if(this.playerActived == 1)
+                        if(this.playerActived == 1){
                             this.playerOne.points += this.cartSelected;
-                        else
+                            this.playerOne.historic.push(this.cartSelected);
+                        }else{
                             this.playerTwo.points += this.cartSelected;
+                            this.playerTwo.historic.push(this.cartSelected);
+                        }
 
 
                         if(this.playerOne.points >= 21 || this.playerTwo.points >= 21)
@@ -102,9 +114,19 @@
                     },
                     resetGame: function(){
                         this.playerOne.points = 0;
+                        this.playerOne.historic = [];
                         this.playerTwo.points = 0;
+                        this.playerTwo.historic = [];
                         this.cartSelected = '';
                         this.playerActived = 1;
+                    }
+                },
+                computed: {
+                    numberHistoricPlayerOne: function(){
+                        return this.playerOne.historic.length
+                    },
+                    numberHistoricPlayerTwo: function(){
+                        return this.playerTwo.historic.length
                     }
                 }
             })
